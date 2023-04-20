@@ -1,4 +1,5 @@
 import "./styles.css";
+import React, { useState } from 'react';
 
 // Add an ID to each book object
 const bookArray = [
@@ -19,32 +20,43 @@ const bookArray = [
 ];
 
 function App() {
+  const [selectedBook, setSelectedBook] = useState(null);
+
+  function getBook(id) {
+    const book = bookList.find(book => book.id === id);
+    console.log(book);
+    setSelectedBook(book);
+  }
+
   return (
-    <section className="booklist">
-      {/* Pass the 'index' argument of the map method
-          for us to use. This is a default argument of the map method
-          and always comes second in the list of arguments. */}
-      {bookArray.map((book, index) => {
-        const { img, title, author } = book;
-        // Use the 'index' argument as the value for the 'key' prop.
-        return <Book key={index} img={img} title={title} author={author} />;
-      })}
-    </section>
+    <div>
+      <h1>Book List</h1>
+      {bookList.map(book => (
+        <Book key={book.id} book={book} getBook={getBook} />
+      ))}
+      {selectedBook && (
+        <div>
+          <h2>Selected Book</h2>
+          <p>{selectedBook.title} by {selectedBook.author}</p>
+        </div>
+      )}
+    </div>
   );
 }
 
-// Destructuring the props object in parentheses
-function Book({ img, title, author, children }) {
-  return (
-    <article className="book">
-      {/** Use the destructured props here */}
-      <img src={img} alt={title} />
-      <h2>{title}</h2>
-      <h4>{author}</h4>
+function Book({ book, getBook }) {
+  const { id, title, author } = book;
 
-      {/* Place your children prop here */}
-      {children}
-    </article>
+  function handleClick() {
+    getBook(id);
+  }
+
+  return (
+    <div>
+      <h3>{title}</h3>
+      <p>by {author}</p>
+      <button onClick={handleClick}>Select Book</button>
+    </div>
   );
 }
 
